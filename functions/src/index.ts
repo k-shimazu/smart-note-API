@@ -46,7 +46,7 @@ export const messageNotice = functions.database.ref('/notice/{userId}/{category}
       //デクリメント時は通知しない
       return;
     }
-    let userId = event.params.userId;
+    const userId = event.params.userId;
     const payload: admin.messaging.MessagingPayload = {
       notification:{
         title: "smart note",
@@ -56,9 +56,10 @@ export const messageNotice = functions.database.ref('/notice/{userId}/{category}
         //icon: "assets/imgs/logo.png"
       }
     };
-    admin.database().ref(`/userProfile/${userId}/fcmToken`).once("value").then(
+    admin.database().ref(`/userProfile/${userId}/fcmToken`).once("value")
+    .then(
       (snapshot: functions.database.DataSnapshot)=>{
-        let token = snapshot.val();
+        const token = snapshot.val();
         if(!token){
           return;
         }
@@ -70,4 +71,7 @@ export const messageNotice = functions.database.ref('/notice/{userId}/{category}
           console.log("Error sending message to ", userId, ":", error);
         })      
     })
+    .catch(error=>{
+      console.log("Error reading token of ", userId, ":", error);
+    })  
 })
